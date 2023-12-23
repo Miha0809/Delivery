@@ -1,0 +1,9 @@
+docker build . -t delivery
+docker compose up
+
+Open a browser or Postman and enter localhost:8088/
+
+
+After testing the application, execute the following command:
+
+docker сompose down
