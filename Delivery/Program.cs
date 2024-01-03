@@ -1,5 +1,4 @@
 using Delivery.Models;
-using Microsoft.AspNetCore.Identity.UI;
 using Delivery.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
