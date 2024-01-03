@@ -1,44 +1,111 @@
+using Delivery.Models;
+using Delivery.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// builder.Services.AddTransient<IAuthorizationHandler, RolesInDBAuthorizationHandler>();
+
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey
+    });
+    
+    options.OperationFilter<SecurityRequirementsOperationFilter>();
+});
+builder.Services.AddControllers();
+builder.Services.AddDbContext<DeliveryDbContext>(options =>
+{
+    options.UseLazyLoadingProxies()
+           .UseNpgsql(builder.Configuration.GetConnectionString("Localhost"));
+});
+builder.Services.AddCors();
+builder.Services.AddAuthorization();
+builder.Services.AddIdentityApiEndpoints<ApplicationUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = false;
+    })
+    .AddRoles<ApplicationRole>()
+    .AddEntityFrameworkStores<DeliveryDbContext>();
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseCors(options =>
 {
+    options.WithOrigins(builder.Configuration.GetSection("FRONT_END_URL").Value!)
+        .AllowAnyHeader()
+        .AllowAnyOrigin()
+        .AllowAnyMethod();
+});
+
+// Configure the HTTP request pipeline.
+// if (app.Environment.IsDevelopment())
+// {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+// }
+
+
+app.MapIdentityApi<ApplicationUser>();
 
 app.UseHttpsRedirection();
+app.UseRouting();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.UseAuthorization();
 
-app.MapGet("/weatherforecast", () =>
-    {
-        var forecast = Enumerable.Range(1, 5).Select(index =>
-                new WeatherForecast
-                (
-                    DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                    Random.Shared.Next(-20, 55),
-                    summaries[Random.Shared.Next(summaries.Length)]
-                ))
-            .ToArray();
-        return forecast;
-    })
-    .WithName("GetWeatherForecast")
-    .WithOpenApi();
+app.MapControllers();
+app.UseEndpoints(endpoints => { endpoints?.MapControllers(); });
+
+// // TODO: винести в інакший класс/метод
+// using (var scope = app.Services.CreateScope())
+// {
+//     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+//     var roles = new[]
+//     {
+//         "Customer",
+//         "Moderator",
+//         "Company",
+//         "Admin"
+//     };
+//
+//     foreach (var role in roles)
+//     {
+//         if (!await roleManager.RoleExistsAsync(role))
+//         {
+//             await roleManager.CreateAsync(new IdentityRole(role));
+//         }
+//     }
+// }
+//
+// // TODO: винести в інакший класс/метод
+// using (var scope = app.Services.CreateScope())
+// {
+//     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+//     var email = "admin@admin.com";
+//     var password = "Test1234,";
+//
+//     if (await userManager.FindByEmailAsync(email) is null)
+//     {
+//         var user = new IdentityUser();
+//         user.UserName = email;
+//         user.Email = email;
+//
+//         await userManager.CreateAsync(user, password);
+//         await userManager.AddToRoleAsync(user, "Admin");
+//     }
+// }
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
