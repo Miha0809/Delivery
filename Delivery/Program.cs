@@ -1,16 +1,12 @@
 using Delivery.Models;
+using Microsoft.AspNetCore.Identity.UI;
 using Delivery.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// builder.Services.AddTransient<IAuthorizationHandler, RolesInDBAuthorizationHandler>();
-
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -37,10 +33,13 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<ApplicationUser>(options =>
     {
         options.SignIn.RequireConfirmedAccount = false;
+        options.User.RequireUniqueEmail = true;
     })
-    .AddRoles<ApplicationRole>()
+    .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<DeliveryDbContext>();
+
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
 var app = builder.Build();
 
 app.UseCors(options =>
@@ -58,18 +57,18 @@ app.UseCors(options =>
     app.UseSwaggerUI();
 // }
 
-
 app.MapIdentityApi<ApplicationUser>();
-
 app.UseHttpsRedirection();
 app.UseRouting();
 
 app.UseAuthorization();
 
 app.MapControllers();
-app.UseEndpoints(endpoints => { endpoints?.MapControllers(); });
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+});
 
-// // TODO: винести в інакший класс/метод
 // using (var scope = app.Services.CreateScope())
 // {
 //     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -90,7 +89,6 @@ app.UseEndpoints(endpoints => { endpoints?.MapControllers(); });
 //     }
 // }
 //
-// // TODO: винести в інакший класс/метод
 // using (var scope = app.Services.CreateScope())
 // {
 //     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
