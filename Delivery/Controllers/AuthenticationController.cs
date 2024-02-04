@@ -7,32 +7,40 @@ namespace Delivery.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthenticationController(UserManager<ApplicationUser> userManager) : ControllerBase
+public class AuthenticationController(UserManager<User> userManager) : ControllerBase
 {
     [HttpPost("register")]
     [AllowAnonymous]
     public async Task<IActionResult> Register([FromBody] RegisterView model)
     {
-        if (ModelState.IsValid)
+        try
         {
-            var user = new ApplicationUser()
+            if (ModelState.IsValid)
             {
-                UserName = model.Email,
-                Email = model.Email
-            };
+                var user = new User()
+                {
+                    UserName = model.Email,
+                    Email = model.Email
+                };
 
-            var result = await userManager.CreateAsync(user, model.Password);
+                var result = await userManager.CreateAsync(user, model.Password);
     
-            if (result.Succeeded)
-            {
-                await userManager.AddToRoleAsync(user, model.Role);
+                if (result.Succeeded)
+                {
+                    await userManager.AddToRoleAsync(user, model.Role);
     
-                return Ok("User registered successfully.");
+                    return Ok("User registered successfully.");
+                }
+    
+                return BadRequest(result.Errors);
             }
     
-            return BadRequest(result.Errors);
+            return BadRequest("Invalid registration data.");
         }
-    
-        return BadRequest("Invalid registration data.");
+        catch (Exception e)
+        {
+            throw new Exception(e.Message);
+        }
+        
     }
 }
