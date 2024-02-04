@@ -4,6 +4,6 @@ public enum Roles
 {
     Customer,
     Moderator,
-    Company,
+    Seller,
     Admin
 }

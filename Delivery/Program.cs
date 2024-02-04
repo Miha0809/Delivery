@@ -25,12 +25,13 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<DeliveryDbContext>(options =>
 {
     options.UseLazyLoadingProxies()
-           .UseNpgsql(builder.Configuration.GetConnectionString("Localhost"));
+           .UseNpgsql(builder.Configuration.GetConnectionString("ElephantSQL")); // ElephantSQL Localhost
 });
 builder.Services.AddCors();
 builder.Services.AddAuthorization();
-builder.Services.AddIdentityApiEndpoints<ApplicationUser>(options =>
+builder.Services.AddIdentityApiEndpoints<User>(options =>
     {
+        
         options.SignIn.RequireConfirmedAccount = false;
         options.User.RequireUniqueEmail = true;
     })
@@ -43,7 +44,9 @@ var app = builder.Build();
 
 app.UseCors(options =>
 {
-    options.WithOrigins(builder.Configuration.GetSection("FRONT_END_URL").Value!)
+    options.WithOrigins(
+            builder.Configuration.GetSection("FRONT_END_URLs:Host").Value!,
+            builder.Configuration.GetSection("FRONT_END_URLs:Local").Value!)
         .AllowAnyHeader()
         .AllowAnyOrigin()
         .AllowAnyMethod();
@@ -56,7 +59,7 @@ app.UseCors(options =>
     app.UseSwaggerUI();
 // }
 
-app.MapIdentityApi<ApplicationUser>();
+app.MapIdentityApi<User>();
 app.UseHttpsRedirection();
 app.UseRouting();
 
@@ -71,20 +74,12 @@ app.UseEndpoints(endpoints =>
 // using (var scope = app.Services.CreateScope())
 // {
 //     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-//     // var roles = new[]
-//     // {
-//     //     "Customer",
-//     //     "Moderator",
-//     //     "Company",
-//     //     "Admin"
-//     // };
-//
 //     var roles = new[]
 //     {
-//         Roles.Admin.ToString(),
-//         Roles.Company.ToString(),
-//         Roles.Customer.ToString(),
-//         Roles.Moderator.ToString()
+//         nameof(Roles.Admin),
+//         nameof(Roles.Seller),
+//         nameof(Roles.Customer),
+//         nameof(Roles.Moderator)
 //     };
 //
 //     foreach (var role in roles)
@@ -98,18 +93,18 @@ app.UseEndpoints(endpoints =>
 //
 // using (var scope = app.Services.CreateScope())
 // {
-//     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+//     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
 //     var email = "admin@admin.com";
 //     var password = "Test1234,";
 //
 //     if (await userManager.FindByEmailAsync(email) is null)
 //     {
-//         var user = new IdentityUser();
+//         var user = new User();
 //         user.UserName = email;
 //         user.Email = email;
 //
 //         await userManager.CreateAsync(user, password);
-//         await userManager.AddToRoleAsync(user, "Admin");
+//         await userManager.AddToRoleAsync(user, nameof(Roles.Admin));
 //     }
 // }
 
