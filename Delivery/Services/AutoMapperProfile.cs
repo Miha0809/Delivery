@@ -8,6 +8,13 @@ public class AutoMapperProfile : Profile
 {
     public AutoMapperProfile()
     {
-        CreateMap<ApplicationUser, UserDto>();
+        CreateMap<User, UserDto>();
+        CreateMap<Product, ProductDto>();
+        CreateMap<Rebate, RebateDto>();
+        CreateMap<DatailsProduct, DatailsProductDto>();
+        CreateMap<Image, ImageDto>();
+        CreateMap<CatalogFirst, CatalogFirstDto>();
+        CreateMap<CatalogSecond, CatalogSecondDto>();
+        CreateMap<Category, CategoryDto>();
     }
 }
