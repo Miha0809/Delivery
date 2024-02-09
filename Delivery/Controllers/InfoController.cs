@@ -12,6 +12,10 @@ namespace Delivery.Controllers;
 [Route("api/[controller]")]
 public class InfoController(DeliveryDbContext context, UserManager<User> userManager, IMapper mapper) : ControllerBase
 {
+    /// <summary>
+    /// Всі користувачі в БД.
+    /// </summary>
+    /// <returns>Всіх користувачів із БД.</returns>
     [HttpGet("/users")]
     public async Task<IActionResult> GetUsers()
     {
@@ -19,6 +23,10 @@ public class InfoController(DeliveryDbContext context, UserManager<User> userMan
         return Ok(mapper.Map<UserDto>(users));
     }
 
+    /// <summary>
+    /// Всі ролі в БД.
+    /// </summary>
+    /// <returns>Всі ролі із БД.</returns>
     [HttpGet("/roles")]
     public async Task<IActionResult> GetRoles()
     {
@@ -292,6 +300,10 @@ public class InfoController(DeliveryDbContext context, UserManager<User> userMan
         }
     };
 
+    /// <summary>
+    /// Всі категорії в БД.
+    /// </summary>
+    /// <returns>Всі категорії із БД.</returns>
     [HttpGet("/all_categories")]
     public async Task<IActionResult> AddCategories()
     {
@@ -324,6 +336,10 @@ public class InfoController(DeliveryDbContext context, UserManager<User> userMan
         return Ok(await context.CatalogFirst.ToListAsync());
     }
 
+    /// <summary>
+    /// Видалити всі категорії в БД.
+    /// </summary>
+    /// <returns>Всі категорії в БД.</returns>
     [HttpDelete("/remove_categories")]
     public async Task<IActionResult> RemoveCategories()
     {
@@ -352,6 +368,10 @@ public class InfoController(DeliveryDbContext context, UserManager<User> userMan
         return Ok(await context.CatalogFirst.ToListAsync());
     }
 
+    /// <summary>
+    /// Всі продукти в БД.
+    /// </summary>
+    /// <returns>Всі продукти з БД.</returns>
     [HttpGet("/all_products")]
     public async Task<IActionResult> AddProducts()
     {
@@ -400,11 +420,15 @@ public class InfoController(DeliveryDbContext context, UserManager<User> userMan
         return Ok(await context.Products.ToListAsync());
     }
 
-    [HttpGet("/remove_products")]
+    /// <summary>
+    /// Видаляє всі продукти в БД.
+    /// </summary>
+    /// <returns>Всі продукти із БД.</returns>
+    [HttpDelete("/remove_products")]
     public async Task<IActionResult> RemoveProducts()
     {
-        context.Images.RemoveRange(context.Images.AsNoTracking().ToList());
-        context.Products.RemoveRange(context.Products.AsNoTracking().ToList());
+        context.Images.RemoveRange(context.Images.ToList());
+        context.Products.RemoveRange(context.Products.ToList());
         await context.SaveChangesAsync();
 
         return Ok(context.Products.ToList());

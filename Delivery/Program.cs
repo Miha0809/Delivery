@@ -1,3 +1,4 @@
+using System.Reflection;
 using Delivery.Models;
 using Delivery.Services;
 using Microsoft.AspNetCore.Identity;
@@ -18,8 +19,18 @@ builder.Services.AddSwaggerGen(options =>
         Name = "Authorization",
         Type = SecuritySchemeType.ApiKey
     });
-    
     options.OperationFilter<SecurityRequirementsOperationFilter>();
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Zhnyvo",
+        Version = "v1",
+        Description = "An API to zhnyvo for TeamChallenger",
+        
+    });
+    
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    options.IncludeXmlComments(xmlPath);
 });
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DeliveryDbContext>(options =>
@@ -53,11 +64,14 @@ app.UseCors(options =>
 });
 
 // Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {
+if (app.Environment.IsDevelopment())
+{
     app.UseSwagger();
-    app.UseSwaggerUI();
-// }
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Zhnyvo V1");
+    });
+}
 
 app.MapIdentityApi<User>();
 app.UseHttpsRedirection();

@@ -2,6 +2,7 @@ namespace Delivery.Models.DTOs;
 
 public class ProductDto
 {
+    public required int Id { get; set; }
     public required string Name { get; set; }
     public required double Weight { get; set; }
     public required uint Price { get; set; }
