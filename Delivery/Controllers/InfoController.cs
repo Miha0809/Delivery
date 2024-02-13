@@ -20,7 +20,7 @@ public class InfoController(DeliveryDbContext context, UserManager<User> userMan
     public async Task<IActionResult> GetUsers()
     {
         var users = await context.Users.ToListAsync();
-        return Ok(mapper.Map<UserDto>(users));
+        return Ok(mapper.Map<List<UserDto>>(users));
     }
 
     /// <summary>
@@ -431,6 +431,6 @@ public class InfoController(DeliveryDbContext context, UserManager<User> userMan
         context.Products.RemoveRange(context.Products.ToList());
         await context.SaveChangesAsync();
 
-        return Ok(context.Products.ToList());
+        return Ok(await context.Products.ToListAsync());
     }
 }

@@ -1,5 +1,5 @@
-
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace Delivery.Models;
 
@@ -22,12 +22,11 @@ public class Product
     [DataType(DataType.Currency)]
     [Range(0, uint.MaxValue)]
     public uint Price { get; set; }
-
     
-    public virtual required List<Image> Images { get; set; }
+    public virtual User Seller { get; set; }
 
-    public virtual User? Seller { get; set; }
     public virtual Rebate? Rebate { get; set; }
+    public virtual List<Image>? Images { get; set; }
     public virtual DatailsProduct? DatailsProduct { get; set; }
     public virtual CatalogFirst? CatalogFirst { get; set; }
     public virtual CatalogSecond? CatalogSecond { get; set; }

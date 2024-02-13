@@ -22,7 +22,7 @@ public class AccountController(UserManager<User> userManager, IMapper mapper, De
     public async Task<IActionResult> GetInformation()
     {
         var user = await userManager.GetUserAsync(User);
-        return Ok(mapper.Map<UserDto>(user));
+        return Ok(mapper.Map<UserInfoFullDto>(user));
     }
 
     // [HttpDelete("/remove")]
