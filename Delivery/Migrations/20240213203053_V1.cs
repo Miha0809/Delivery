@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Delivery.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class V1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -31,6 +31,9 @@ namespace Delivery.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
+                    FirstName = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: true),
+                    LastName = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
+                    Age = table.Column<int>(type: "integer", nullable: false),
                     UserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
@@ -52,7 +55,20 @@ namespace Delivery.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Role",
+                name: "Brand",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Brand", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CatalogFirst",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -61,7 +77,21 @@ namespace Delivery.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Role", x => x.Id);
+                    table.PrimaryKey("PK_CatalogFirst", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Rebate",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    NewPrice = table.Column<long>(type: "bigint", nullable: true),
+                    IsRebate = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Rebate", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -171,23 +201,130 @@ namespace Delivery.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "DatailsProduct",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ShelfLife = table.Column<int>(type: "integer", nullable: false),
+                    State = table.Column<string>(type: "text", nullable: false),
+                    BrandId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DatailsProduct", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DatailsProduct_Brand_BrandId",
+                        column: x => x.BrandId,
+                        principalTable: "Brand",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CatalogSecond",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false),
-                    Age = table.Column<int>(type: "integer", nullable: false),
-                    RoleId = table.Column<int>(type: "integer", nullable: true)
+                    CatalogFirstId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_CatalogSecond", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Users_Role_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "Role",
+                        name: "FK_CatalogSecond_CatalogFirst_CatalogFirstId",
+                        column: x => x.CatalogFirstId,
+                        principalTable: "CatalogFirst",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    CatalogSecondId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Categories_CatalogSecond_CatalogSecondId",
+                        column: x => x.CatalogSecondId,
+                        principalTable: "CatalogSecond",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Products",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
+                    Weight = table.Column<double>(type: "double precision", nullable: false),
+                    Price = table.Column<long>(type: "bigint", nullable: false),
+                    SellerId = table.Column<string>(type: "text", nullable: true),
+                    RebateId = table.Column<int>(type: "integer", nullable: true),
+                    DatailsProductId = table.Column<int>(type: "integer", nullable: true),
+                    CatalogFirstId = table.Column<int>(type: "integer", nullable: true),
+                    CatalogSecondId = table.Column<int>(type: "integer", nullable: true),
+                    CategoryId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Products", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Products_AspNetUsers_SellerId",
+                        column: x => x.SellerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_CatalogFirst_CatalogFirstId",
+                        column: x => x.CatalogFirstId,
+                        principalTable: "CatalogFirst",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_CatalogSecond_CatalogSecondId",
+                        column: x => x.CatalogSecondId,
+                        principalTable: "CatalogSecond",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_DatailsProduct_DatailsProductId",
+                        column: x => x.DatailsProductId,
+                        principalTable: "DatailsProduct",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Products_Rebate_RebateId",
+                        column: x => x.RebateId,
+                        principalTable: "Rebate",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Images",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Link = table.Column<string>(type: "text", maxLength: 2147483647, nullable: false),
+                    ProductId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Images", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Images_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
                         principalColumn: "Id");
                 });
 
@@ -229,9 +366,54 @@ namespace Delivery.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_RoleId",
-                table: "Users",
-                column: "RoleId");
+                name: "IX_CatalogSecond_CatalogFirstId",
+                table: "CatalogSecond",
+                column: "CatalogFirstId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Categories_CatalogSecondId",
+                table: "Categories",
+                column: "CatalogSecondId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DatailsProduct_BrandId",
+                table: "DatailsProduct",
+                column: "BrandId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Images_ProductId",
+                table: "Images",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_CatalogFirstId",
+                table: "Products",
+                column: "CatalogFirstId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_CatalogSecondId",
+                table: "Products",
+                column: "CatalogSecondId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_CategoryId",
+                table: "Products",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_DatailsProductId",
+                table: "Products",
+                column: "DatailsProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_RebateId",
+                table: "Products",
+                column: "RebateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_SellerId",
+                table: "Products",
+                column: "SellerId");
         }
 
         /// <inheritdoc />
@@ -253,16 +435,34 @@ namespace Delivery.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Images");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "Products");
+
+            migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Role");
+                name: "Categories");
+
+            migrationBuilder.DropTable(
+                name: "DatailsProduct");
+
+            migrationBuilder.DropTable(
+                name: "Rebate");
+
+            migrationBuilder.DropTable(
+                name: "CatalogSecond");
+
+            migrationBuilder.DropTable(
+                name: "Brand");
+
+            migrationBuilder.DropTable(
+                name: "CatalogFirst");
         }
     }
 }

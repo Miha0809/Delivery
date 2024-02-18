@@ -15,4 +15,6 @@ public class User : IdentityUser
     
     [Display(Name = "Років")]
     public int Age { get; set; }
+    
+    public virtual List<Favorite>? Favorites { get; set; }
 }

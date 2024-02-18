@@ -3,6 +3,7 @@ using System;
 using Delivery.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Delivery.Migrations
 {
     [DbContext(typeof(DeliveryDbContext))]
-    partial class DeliveryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240213203053_V1")]
+    partial class V1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,27 +130,6 @@ namespace Delivery.Migrations
                     b.HasIndex("BrandId");
 
                     b.ToTable("DatailsProduct");
-                });
-
-            modelBuilder.Entity("Delivery.Models.Favorite", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Favorites");
                 });
 
             modelBuilder.Entity("Delivery.Models.Image", b =>
@@ -476,13 +458,6 @@ namespace Delivery.Migrations
                     b.Navigation("Brand");
                 });
 
-            modelBuilder.Entity("Delivery.Models.Favorite", b =>
-                {
-                    b.HasOne("Delivery.Models.User", null)
-                        .WithMany("Favorites")
-                        .HasForeignKey("UserId");
-                });
-
             modelBuilder.Entity("Delivery.Models.Image", b =>
                 {
                     b.HasOne("Delivery.Models.Product", null)
@@ -513,7 +488,7 @@ namespace Delivery.Migrations
                         .HasForeignKey("RebateId");
 
                     b.HasOne("Delivery.Models.User", "Seller")
-                        .WithMany()
+                        .WithMany("FavoritesProducts")
                         .HasForeignKey("SellerId");
 
                     b.Navigation("CatalogFirst");
@@ -597,7 +572,7 @@ namespace Delivery.Migrations
 
             modelBuilder.Entity("Delivery.Models.User", b =>
                 {
-                    b.Navigation("Favorites");
+                    b.Navigation("FavoritesProducts");
                 });
 #pragma warning restore 612, 618
         }

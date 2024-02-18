@@ -8,7 +8,7 @@ namespace Delivery.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class AuthenticationController(UserManager<User> userManager) : ControllerBase
+public class AuthenticationController(UserManager<User> userManager) : Controller
 {
     /// <summary>
     /// Авторизація.

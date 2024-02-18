@@ -7,7 +7,7 @@ namespace Delivery.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class HomeController(DeliveryDbContext context, UserManager<User> userManager) : ControllerBase
+public class HomeController(DeliveryDbContext context, UserManager<User> userManager) : Controller
 {
     
 }
