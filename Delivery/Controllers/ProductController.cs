@@ -12,7 +12,7 @@ namespace Delivery.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 // [Authorize(Roles = $"{nameof(Roles.Admin)},{nameof(Roles.Moderator)},{nameof(Roles.Seller)}")] TODO: uncomment
-public class ProductController(DeliveryDbContext context, UserManager<User> userManager, IMapper mapper) : ControllerBase
+public class ProductController(DeliveryDbContext context, UserManager<User> userManager, IMapper mapper) : Controller
 {
     /// <summary>
     /// Продукт по id.
@@ -21,7 +21,7 @@ public class ProductController(DeliveryDbContext context, UserManager<User> user
     /// <returns>Продукт.</returns>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [HttpGet("/product/{id}")]
+    [HttpGet("{id}")]
     [AllowAnonymous]
     public async Task<IActionResult> GetProductById(int id)
     {
@@ -35,7 +35,7 @@ public class ProductController(DeliveryDbContext context, UserManager<User> user
     /// <returns>Всі продукти із БД.</returns>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [HttpGet("/products")]
+    [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetProducts()
     {
@@ -85,7 +85,7 @@ public class ProductController(DeliveryDbContext context, UserManager<User> user
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [HttpPost("/add")]
+    [HttpPost("")]
     public async Task<IActionResult> Add([FromBody] Product product)
     {
         var user = await userManager.GetUserAsync(User);
@@ -111,7 +111,7 @@ public class ProductController(DeliveryDbContext context, UserManager<User> user
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [HttpDelete("/delete")]
+    [HttpDelete()]
     public async Task<IActionResult> Delete(int id)
     {
         var product = await context.Products.FirstOrDefaultAsync(product1 => product1.Id.Equals(id));
@@ -156,7 +156,7 @@ public class ProductController(DeliveryDbContext context, UserManager<User> user
     /// <param name="id">Id продукта.</param>
     /// <param name="productDto">Новий відредагований продукт.</param>
     /// <returns></returns>
-    [HttpPut("/change/{id}")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> Change(int id, [FromBody] ProductDto productDto)
     {
         productDto.Seller = mapper.Map<UserDto>(await userManager.GetUserAsync(User));

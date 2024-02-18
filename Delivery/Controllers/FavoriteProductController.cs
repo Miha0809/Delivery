@@ -11,7 +11,7 @@ namespace Delivery.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 // [Authorize] TODO: Uncomment
-public class FavoriteProductController(UserManager<User> userManager, DeliveryDbContext context, IMapper mapper) : ControllerBase
+public class FavoriteProductController(UserManager<User> userManager, DeliveryDbContext context, IMapper mapper) : Controller
 {
     /// <summary>
     /// Улюблені товари користувача.

@@ -10,7 +10,7 @@ namespace Delivery.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class InfoController(DeliveryDbContext context, UserManager<User> userManager, IMapper mapper) : ControllerBase
+public class InfoController(DeliveryDbContext context, UserManager<User> userManager, IMapper mapper) : Controller
 {
     /// <summary>
     /// Всі користувачі в БД.
