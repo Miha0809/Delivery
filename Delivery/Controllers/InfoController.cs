@@ -63,7 +63,7 @@ public class InfoController(DeliveryDbContext context, UserManager<User> userMan
                         new() { Name = "Millet groats" },
                         new() { Name = "Fig" },
                         new() { Name = "Lentil" },
-                        new() { Name = "Lentil" }
+                        new() { Name = "Barley groats" }
                     }
                 },
                 new()
@@ -85,7 +85,7 @@ public class InfoController(DeliveryDbContext context, UserManager<User> userMan
                         new() { Name = "Noodles" },
                         new() { Name = "Horns" },
                         new() { Name = "Spaghetti" },
-                        new() { Name = "figurines" },
+                        new() { Name = "Figurines" },
                         new() { Name = "Fusilli" }
                     }
                 }
@@ -101,23 +101,17 @@ public class InfoController(DeliveryDbContext context, UserManager<User> userMan
                     Name = "Vegetables",
                     Categories = new List<Category>()
                     {
-                        new() { Name = "Cereals" },
-                        new() { Name = "Flour" },
-                        new() { Name = "Porridge and muesli" },
-                        new() { Name = "Pasta" },
-                        new() { Name = "Vegetables" },
-                        new() { Name = "Fruits" },
-                        new() { Name = "Dried fruits" },
-                        new() { Name = "Greens" },
-                        new() { Name = "Cream" },
-                        new() { Name = "Butter" },
-                        new() { Name = "Milk" },
-                        new() { Name = "Cheese" },
-                        new() { Name = "Eggs" },
-                        new() { Name = "Meat" },
-                        new() { Name = "Sausage and sausages" },
-                        new() { Name = "Fish" },
-                        new() { Name = "Seafood" }
+                        new() { Name = "Beet" },
+                        new() { Name = "Zucchini" },
+                        new() { Name = "Cabbage" },
+                        new() { Name = "Potato" },
+                        new() { Name = "Garlic" },
+                        new() { Name = "Carrot" },
+                        new() { Name = "Cucumbers" },
+                        new() { Name = "Pepper" },
+                        new() { Name = "Tomatoes" },
+                        new() { Name = "Radish and radish" },
+                        new() { Name = "Onion" }
                     }
                 },
                 new()
@@ -150,7 +144,7 @@ public class InfoController(DeliveryDbContext context, UserManager<User> userMan
                         new() { Name = "Assorted fruit" },
                         new() { Name = "Strawberries" },
                         new() { Name = "Raisins" },
-                        new() { Name = "candied fruit" }
+                        new() { Name = "Candied fruit" }
                     }
                 },
                 new()
@@ -212,12 +206,12 @@ public class InfoController(DeliveryDbContext context, UserManager<User> userMan
                     {
                         new() { Name = "Smoked" },
                         new() { Name = "Cream cheese" },
-                        new() { Name = "Smoked" },
-                        new() { Name = "Smoked" },
-                        new() { Name = "Smoked" },
-                        new() { Name = "Smoked" },
-                        new() { Name = "Smoked" },
-                        new() { Name = "Smoked" }
+                        new() { Name = "Soft" },
+                        new() { Name = "Semisolid" },
+                        new() { Name = "Molten" },
+                        new() { Name = "Pickled" },
+                        new() { Name = "Firm" },
+                        new() { Name = "With mold" }
                     }
                 },
                 new()
@@ -254,8 +248,7 @@ public class InfoController(DeliveryDbContext context, UserManager<User> userMan
                     Categories = new List<Category>()
                     {
                         new() { Name = "Sausages" },
-                        new() { Name = "Anchovies" },
-                        new() { Name = "Sausages" }
+                        new() { Name = "Anchovies" }
                     }
                 },
                 new()
@@ -365,6 +358,8 @@ public class InfoController(DeliveryDbContext context, UserManager<User> userMan
             }
         }
 
+        await context.SaveChangesAsync();
+
         return Ok(await context.CatalogFirst.ToListAsync());
     }
 
@@ -386,30 +381,75 @@ public class InfoController(DeliveryDbContext context, UserManager<User> userMan
                     Name = "Tomato",
                     Weight = 10,
                     Price = 100,
-                    Images = new List<Image>()
+                    Images = new List<Image>
                     {
                         new() { Link = "https://i.postimg.cc/FsY7nR4K/tomato-1.jpg" },
                         new() { Link = "https://i.postimg.cc/FsY7nR4K/tomato-2.jpg" }
                     },
                     Seller = user,
-                    CatalogFirst = catalogFirst[1],
-                    CatalogSecond = catalogFirst[1].CatalogSeconds![0],
-                    Category = catalogFirst[1].CatalogSeconds![0].Categories![8]
+                    CatalogFirst = catalogFirst[2],
+                    CatalogSecond = catalogFirst[2].CatalogSeconds![0],
+                    Category = catalogFirst[2].CatalogSeconds![0].Categories![8]
                 },
                 new()
                 {
                     Name = "Cucumber",
                     Weight = 12,
                     Price = 96,
-                    Images = new List<Image>()
+                    Images = new List<Image>
                     {
                         new() { Link = "https://i.postimg.cc/Mp18rk34/cucumber-1.jpg" },
                         new() { Link = "https://i.postimg.cc/Mp18rk34/cucumber-2.jpg" },
                     },
                     Seller = user,
-                    CatalogFirst = catalogFirst[1],
-                    CatalogSecond = catalogFirst[1].CatalogSeconds![0],
-                    Category = catalogFirst[1].CatalogSeconds![0].Categories![6]
+                    CatalogFirst = catalogFirst[2],
+                    CatalogSecond = catalogFirst[2].CatalogSeconds![0],
+                    Category = catalogFirst[2].CatalogSeconds![0].Categories![6]
+                },
+                new()
+                {
+                    Name = "Cucumber",
+                    Weight = 5.5,
+                    Price = 12,
+                    Images = new List<Image>
+                    {
+                        new() { Link = "https://i.postimg.cc/Mp18rk34/cucumber-1.jpg" },
+                        new() { Link = "https://i.postimg.cc/Mp18rk34/cucumber-2.jpg" },
+                    },
+                    Seller = user,
+                    CatalogFirst = catalogFirst[2],
+                    CatalogSecond = catalogFirst[2].CatalogSeconds![0],
+                    Category = catalogFirst[2].CatalogSeconds![0].Categories![6]
+                },
+                new()
+                {
+                    Name = "Tomato",
+                    Weight = 5,
+                    Price = 123,
+                    Images = new List<Image>
+                    {
+                        new() { Link = "https://i.postimg.cc/FsY7nR4K/tomato-1.jpg" },
+                        new() { Link = "https://i.postimg.cc/FsY7nR4K/tomato-2.jpg" }
+                    },
+                    Seller = user,
+                    CatalogFirst = catalogFirst[2],
+                    CatalogSecond = catalogFirst[2].CatalogSeconds![0],
+                    Category = catalogFirst[2].CatalogSeconds![0].Categories![8]
+                },
+                new()
+                {
+                    Name = "Onion",
+                    Weight = 1.96,
+                    Price = 5,
+                    Images = new List<Image>
+                    {
+                        new() { Link = "https://i.postimg.cc/DfYgR8tJ/onion-1.jpg" },
+                        new() { Link = "https://i.postimg.cc/7PpBf5mv/onion-2.jpg" }
+                    },
+                    Seller = user,
+                    CatalogFirst = catalogFirst[2],
+                    CatalogSecond = catalogFirst[2].CatalogSeconds![0],
+                    Category = catalogFirst[2].CatalogSeconds![0].Categories![10]
                 }
             };
 

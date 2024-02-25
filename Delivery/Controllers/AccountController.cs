@@ -1,6 +1,7 @@
 using AutoMapper;
 using Delivery.Models;
 using Delivery.Models.DTOs;
+using Delivery.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -51,5 +52,11 @@ public class AccountController(UserManager<User> userManager, IMapper mapper) : 
     {
         Response.Cookies.Delete(".AspNetCore.Identity.Application");
         return Ok();
+    }
+
+    [HttpGet("write_data")]
+    public async Task<IActionResult> WriteData()
+    {
+        return Ok("Hey");
     }
 }

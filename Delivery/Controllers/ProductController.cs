@@ -85,7 +85,7 @@ public class ProductController(DeliveryDbContext context, UserManager<User> user
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [HttpPost("")]
+    [HttpPost]
     public async Task<IActionResult> Add([FromBody] Product product)
     {
         var user = await userManager.GetUserAsync(User);
@@ -111,7 +111,7 @@ public class ProductController(DeliveryDbContext context, UserManager<User> user
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [HttpDelete()]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
         var product = await context.Products.FirstOrDefaultAsync(product1 => product1.Id.Equals(id));
