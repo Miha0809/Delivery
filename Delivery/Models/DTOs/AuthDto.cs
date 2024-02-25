@@ -1,9 +1,8 @@
-
 using System.ComponentModel.DataAnnotations;
 
-namespace Delivery.Models;
+namespace Delivery.Models.DTOs;
 
-public class RegisterView
+public class AuthDto
 {
     [StringLength(128, MinimumLength = 5)]
     [DataType(DataType.EmailAddress)]
@@ -12,7 +11,4 @@ public class RegisterView
     [StringLength(ushort.MaxValue, MinimumLength = 8)]
     [DataType(DataType.Password)]
     public required string Password { get; set; }
-    
-    [EnumDataType(typeof(Roles))]
-    public required string Role { get; set; }
 }
