@@ -73,7 +73,6 @@ app.UseCors(options =>
     });
 // }
 
-app.MapIdentityApi<User>();
 app.UseHttpsRedirection();
 app.UseRouting();
 
