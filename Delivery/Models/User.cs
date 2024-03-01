@@ -17,4 +17,5 @@ public class User : IdentityUser
     public int Age { get; set; }
     
     public virtual List<Favorite>? Favorites { get; set; }
+    public virtual List<Cart>? Carts { get; set; }
 }

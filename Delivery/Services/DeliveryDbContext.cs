@@ -1,4 +1,3 @@
-using AutoMapper;
 using Delivery.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -13,8 +12,17 @@ public class DeliveryDbContext : IdentityDbContext<User>
     public DbSet<Category> Categories { get; set; }
     public DbSet<Image> Images { get; set; }
     public DbSet<Favorite> Favorites { get; set; }
+    public DbSet<Cart> Carts { get; set; }
     
     public DeliveryDbContext(DbContextOptions<DeliveryDbContext> options) : base(options)
     {
+    }
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        builder.Entity<Favorite>()
+            .HasKey(p => p.ProductId);
+            
+        base.OnModelCreating(builder);
     }
 }

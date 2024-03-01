@@ -1,10 +1,11 @@
 namespace Delivery.Models.DTOs;
 
-public class UserInfoFullDto
+public class UserPrivateInfoDto
 {
     public required string Email { get; set; }
     public required string FirstName { get; set; }
     public required string LastName { get; set; }
     public required int Age { get; set; }
-    public List<FavoriteDto>? Favorites { get; set; }
+    public List<Favorite>? Favorites { get; set; }
+    public List<Cart> Carts { get; set; }
 }
