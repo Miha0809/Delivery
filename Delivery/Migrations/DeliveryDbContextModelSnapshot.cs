@@ -43,6 +43,27 @@ namespace Delivery.Migrations
                     b.ToTable("Brand");
                 });
 
+            modelBuilder.Entity("Delivery.Models.Cart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Carts");
+                });
+
             modelBuilder.Entity("Delivery.Models.CatalogFirst", b =>
                 {
                     b.Property<int>("Id")
@@ -131,19 +152,19 @@ namespace Delivery.Migrations
 
             modelBuilder.Entity("Delivery.Models.Favorite", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("ProductId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("ProductId"));
 
-                    b.Property<int>("ProductId")
+                    b.Property<int>("Id")
                         .HasColumnType("integer");
 
                     b.Property<string>("UserId")
                         .HasColumnType("text");
 
-                    b.HasKey("Id");
+                    b.HasKey("ProductId");
 
                     b.HasIndex("UserId");
 
@@ -453,6 +474,13 @@ namespace Delivery.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Delivery.Models.Cart", b =>
+                {
+                    b.HasOne("Delivery.Models.User", null)
+                        .WithMany("Carts")
+                        .HasForeignKey("UserId");
+                });
+
             modelBuilder.Entity("Delivery.Models.CatalogSecond", b =>
                 {
                     b.HasOne("Delivery.Models.CatalogFirst", null)
@@ -597,6 +625,8 @@ namespace Delivery.Migrations
 
             modelBuilder.Entity("Delivery.Models.User", b =>
                 {
+                    b.Navigation("Carts");
+
                     b.Navigation("Favorites");
                 });
 #pragma warning restore 612, 618

@@ -1,7 +1,6 @@
 using AutoMapper;
 using Delivery.Models;
 using Delivery.Models.DTOs;
-using Delivery.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +21,7 @@ public class AccountController(UserManager<User> userManager, IMapper mapper) : 
     public async Task<IActionResult> GetInformation()
     {
         var user = await userManager.GetUserAsync(User);
-        return Ok(mapper.Map<UserInfoFullDto>(user));
+        return Ok(mapper.Map<UserPrivateInfoDto>(user));
     }
 
     // [HttpDelete("/remove")]
