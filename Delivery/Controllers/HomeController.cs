@@ -16,7 +16,7 @@ public class HomeController(DeliveryDbContext context, UserManager<User> userMan
     public async Task<IActionResult> LastViewed()
     {
         var user = await userManager.GetUserAsync(User);
-        var lastViewed = await context.LastViewed.Where(lv => lv.User.Id.Equals(user.Id)).ToListAsync();
+        var lastViewed = await context.LastViewed.Where(lv => lv.UserId.Equals(user.Id)).ToListAsync();
         
         if (lastViewed is not null)
         {
@@ -37,7 +37,7 @@ public class HomeController(DeliveryDbContext context, UserManager<User> userMan
     public async Task<IActionResult> NewProducts()
     {
         const ushort daysNewProduct = 7;
-        var products = await context.Products.Where(p => p.Publish.AddDays(daysNewProduct) >= p.Publish).ToListAsync();
+        var products = await context.Products.Where(p => p.Publish.AddDays(daysNewProduct) >= p.Publish).AsNoTracking().ToListAsync();
         return Ok(products);
     }
 }

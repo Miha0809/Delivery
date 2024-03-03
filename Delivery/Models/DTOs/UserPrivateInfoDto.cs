@@ -7,5 +7,6 @@ public class UserPrivateInfoDto
     public required string LastName { get; set; }
     public required int Age { get; set; }
     public List<Favorite>? Favorites { get; set; }
-    public List<Cart> Carts { get; set; }
+    public List<Cart>? Carts { get; set; }
+    public List<LastViewedDto>? LastViewed { get; set; }
 }
