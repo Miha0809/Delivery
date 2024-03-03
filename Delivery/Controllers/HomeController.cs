@@ -32,4 +32,12 @@ public class HomeController(DeliveryDbContext context, UserManager<User> userMan
         var products = await context.Products.Where(p => (p.Rebate != null && p.Rebate.IsRebate)).ToListAsync();
         return Ok(mapper.Map<List<Product>, List<ProductDto>>(products));
     }
+
+    [HttpGet("new_products")]
+    public async Task<IActionResult> NewProducts()
+    {
+        const ushort daysNewProduct = 7;
+        var products = await context.Products.Where(p => p.Publish.AddDays(daysNewProduct) >= p.Publish).ToListAsync();
+        return Ok(products);
+    }
 }

@@ -23,6 +23,8 @@ public class Product
     [Range(0, uint.MaxValue)]
     public uint Price { get; set; }
     
+    public DateTime Publish { get; set; } = DateTime.UtcNow;
+    
     public virtual User Seller { get; set; }
 
     public virtual Rebate? Rebate { get; set; }
