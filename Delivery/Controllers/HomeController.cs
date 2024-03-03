@@ -25,4 +25,11 @@ public class HomeController(DeliveryDbContext context, UserManager<User> userMan
 
         return BadRequest();
     }
+
+    [HttpGet("special_offers")]
+    public async Task<IActionResult> SpecialOffers()
+    {
+        var products = await context.Products.Where(p => (p.Rebate != null && p.Rebate.IsRebate)).ToListAsync();
+        return Ok(mapper.Map<List<Product>, List<ProductDto>>(products));
+    }
 }
