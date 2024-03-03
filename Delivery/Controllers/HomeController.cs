@@ -40,4 +40,14 @@ public class HomeController(DeliveryDbContext context, UserManager<User> userMan
         var products = await context.Products.Where(p => p.Publish.AddDays(daysNewProduct) >= p.Publish).AsNoTracking().ToListAsync();
         return Ok(products);
     }
+
+    [HttpGet("more_products")]
+    public async Task<IActionResult> MoreProductsFromCatalog()
+    {
+        var firstCatalog = await context.CatalogFirst.Select(p => new
+        {
+            p.Id, p.Name
+        }).ToListAsync();
+        return Ok(firstCatalog);
+    }
 }
