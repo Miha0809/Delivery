@@ -25,7 +25,21 @@ public class ProductController(DeliveryDbContext context, UserManager<User> user
     [AllowAnonymous]
     public async Task<IActionResult> GetProductById(int id)
     {
-        var productById = context.Products.ToList().FirstOrDefault(product => product.Id.Equals(id))!;
+        var user = await userManager.GetUserAsync(User);
+        var productById = context.Products.ToList().FirstOrDefault(product => product.Id.Equals(id));
+
+        if (user is not null && productById is not null)
+        {
+            var lastViewed = new LastViewed
+            {
+                ProductId = id,
+                UserId = user.Id
+            };
+
+            await context.LastViewed.AddAsync(lastViewed);
+            await context.SaveChangesAsync();
+        }
+        
         return Ok(mapper.Map<ProductDto>(productById));
     }
 

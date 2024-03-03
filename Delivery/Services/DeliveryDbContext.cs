@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Delivery.Services;
 
-public class DeliveryDbContext : IdentityDbContext<User>
+public class DeliveryDbContext(DbContextOptions<DeliveryDbContext> options) : IdentityDbContext<User>(options)
 {
     public DbSet<Product> Products { get; set; }
     public DbSet<CatalogFirst> CatalogFirst { get; set; }
@@ -13,16 +13,5 @@ public class DeliveryDbContext : IdentityDbContext<User>
     public DbSet<Image> Images { get; set; }
     public DbSet<Favorite> Favorites { get; set; }
     public DbSet<Cart> Carts { get; set; }
-    
-    public DeliveryDbContext(DbContextOptions<DeliveryDbContext> options) : base(options)
-    {
-    }
-
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        builder.Entity<Favorite>()
-            .HasKey(p => p.ProductId);
-            
-        base.OnModelCreating(builder);
-    }
+    public DbSet<LastViewed> LastViewed { get; set; }
 }
