@@ -16,6 +16,12 @@ public class HomeController(DeliveryDbContext context, UserManager<User> userMan
     public async Task<IActionResult> LastViewed()
     {
         var user = await userManager.GetUserAsync(User);
+
+        if (user is null)
+        {
+            return Unauthorized();
+        }
+        
         var lastViewed = await context.LastViewed.Where(lv => lv.UserId.Equals(user.Id)).ToListAsync();
         
         if (lastViewed is not null)
@@ -29,7 +35,7 @@ public class HomeController(DeliveryDbContext context, UserManager<User> userMan
     [HttpGet("special_offers")]
     public async Task<IActionResult> SpecialOffers()
     {
-        var products = await context.Products.Where(p => (p.Rebate != null && p.Rebate.IsRebate)).ToListAsync();
+        var products = await context.Products.Where(p => p.Rebate != null && p.Rebate.IsRebate).ToListAsync();
         return Ok(mapper.Map<List<Product>, List<ProductDto>>(products));
     }
 
@@ -37,8 +43,8 @@ public class HomeController(DeliveryDbContext context, UserManager<User> userMan
     public async Task<IActionResult> NewProducts()
     {
         const ushort daysNewProduct = 7;
-        var products = await context.Products.Where(p => p.Publish.AddDays(daysNewProduct) >= p.Publish).AsNoTracking().ToListAsync();
-        return Ok(products);
+        var products = await context.Products.Where(p => p.Publish.AddDays(daysNewProduct) >= p.Publish).ToListAsync();
+        return Ok(mapper.Map<List<Product>, List<ProductDto>>(products));
     }
 
     [HttpGet("more_products")]
