@@ -13,4 +13,6 @@ public class ProductDto
     public required CatalogFirstDto CatalogFirst { get; set; }
     public required CatalogSecondDto CatalogSecond { get; set; }
     public required CategoryDto Category { get; set; }
+    
+    public RebateDto? Rebate { get; set; }
 }

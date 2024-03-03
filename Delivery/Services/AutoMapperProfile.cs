@@ -17,5 +17,6 @@ public class AutoMapperProfile : Profile
         CreateMap<CatalogFirst, CatalogFirstDto>();
         CreateMap<CatalogSecond, CatalogSecondDto>();
         CreateMap<Category, CategoryDto>();
+        CreateMap<LastViewed, LastViewedDto>();
     }
 }

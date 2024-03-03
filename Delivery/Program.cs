@@ -36,7 +36,7 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<DeliveryDbContext>(options =>
 {
     options.UseLazyLoadingProxies()
-           .UseNpgsql(builder.Configuration.GetConnectionString("ElephantSQL")); // ElephantSQL Localhost
+           .UseNpgsql(builder.Configuration.GetConnectionString("Host")); // Host Localhost
 });
 builder.Services.AddCors();
 builder.Services.AddAuthorization();
@@ -84,41 +84,45 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
 });
 
-// using (var scope = app.Services.CreateScope())
-// {
-//     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-//     var roles = new[]
-//     {
-//         nameof(Roles.Admin),
-//         nameof(Roles.Seller),
-//         nameof(Roles.Customer),
-//         nameof(Roles.Moderator)
-//     };
-//
-//     foreach (var role in roles)
-//     {
-//         if (!await roleManager.RoleExistsAsync(role))
-//         {
-//             await roleManager.CreateAsync(new IdentityRole(role));
-//         }
-//     }
-// }
-//
-// using (var scope = app.Services.CreateScope())
-// {
-//     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
-//     var email = "admin@admin.com";
-//     var password = "Test1234,";
-//
-//     if (await userManager.FindByEmailAsync(email) is null)
-//     {
-//         var user = new User();
-//         user.UserName = email;
-//         user.Email = email;
-//
-//         await userManager.CreateAsync(user, password);
-//         await userManager.AddToRoleAsync(user, nameof(Roles.Admin));
-//     }
-// }
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    var roles = new[]
+    {
+        nameof(Roles.Admin),
+        nameof(Roles.Seller),
+        nameof(Roles.Customer),
+        nameof(Roles.Moderator)
+    };
+
+    foreach (var role in roles)
+    {
+        if (!await roleManager.RoleExistsAsync(role))
+        {
+            await roleManager.CreateAsync(new IdentityRole(role));
+        }
+        else
+        {
+            continue;
+        }
+    }
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<User>>();
+    var email = "admin@admin.com";
+    var password = "Test1234,";
+
+    if (await userManager.FindByEmailAsync(email) is null)
+    {
+        var user = new User();
+        user.UserName = email;
+        user.Email = email;
+
+        await userManager.CreateAsync(user, password);
+        await userManager.AddToRoleAsync(user, nameof(Roles.Admin));
+    }
+}
 
 app.Run();
