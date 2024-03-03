@@ -32,8 +32,8 @@ public class ProductController(DeliveryDbContext context, UserManager<User> user
         {
             var lastViewed = new LastViewed
             {
-                ProductId = id,
-                UserId = user.Id
+                Product = productById,
+                User = user
             };
 
             await context.LastViewed.AddAsync(lastViewed);

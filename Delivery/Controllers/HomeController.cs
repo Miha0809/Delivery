@@ -16,7 +16,7 @@ public class HomeController(DeliveryDbContext context, UserManager<User> userMan
     public async Task<IActionResult> LastViewed()
     {
         var user = await userManager.GetUserAsync(User);
-        var lastViewed = await context.LastViewed.Where(lv => lv.UserId.Equals(user.Id)).ToListAsync();
+        var lastViewed = await context.LastViewed.Where(lv => lv.User.Id.Equals(user.Id)).ToListAsync();
         
         if (lastViewed is not null)
         {
