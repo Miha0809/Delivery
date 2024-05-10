@@ -13,6 +13,7 @@
       <Optimize>true</Optimize>
       <NoWarn>1701;1702;1591</NoWarn>
       <DocumentationFile>bin\Debug\net8.0\Delivery.xml</DocumentationFile>
+      <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
