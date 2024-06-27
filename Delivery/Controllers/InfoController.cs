@@ -1,7 +1,7 @@
 using AutoMapper;
 using Delivery.Models;
 using Delivery.Models.DTOs;
-using Delivery.Services;
+using Delivery.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -325,7 +325,7 @@ public class InfoController(DeliveryDbContext context, UserManager<User> userMan
         }
 
         await context.SaveChangesAsync();
-        
+
         return Ok(await context.CatalogFirst.ToListAsync());
     }
 

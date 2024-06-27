@@ -1,7 +1,7 @@
 using Delivery.Models;
-using Delivery.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Delivery.Context;
 
 namespace Delivery.Controllers;
 
@@ -41,7 +41,7 @@ public class CartController(DeliveryDbContext context, UserManager<User> userMan
             {
                 ProductId = product.Id
             };
-            
+
             user.Carts?.Add(cart);
             context.Users.Update(user);
             await context.SaveChangesAsync();
@@ -56,7 +56,7 @@ public class CartController(DeliveryDbContext context, UserManager<User> userMan
     {
         return context.Products.Find(id) != null;
     }
-    
+
     /// <summary>
     /// Видалити товар з кошика.
     /// </summary>
