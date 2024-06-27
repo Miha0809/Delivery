@@ -2,10 +2,11 @@ using Delivery.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Delivery.Services;
+namespace Delivery.Context;
 
 public class DeliveryDbContext(DbContextOptions<DeliveryDbContext> options) : IdentityDbContext<User>(options)
 {
+    public DbSet<User> Users { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<CatalogFirst> CatalogFirst { get; set; }
     public DbSet<CatalogSecond> CatalogSecond { get; set; }

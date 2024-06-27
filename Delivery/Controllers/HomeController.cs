@@ -1,7 +1,7 @@
 using AutoMapper;
 using Delivery.Models;
 using Delivery.Models.DTOs;
-using Delivery.Services;
+using Delivery.Context;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,9 +21,9 @@ public class HomeController(DeliveryDbContext context, UserManager<User> userMan
         {
             return Unauthorized();
         }
-        
+
         var lastViewed = await context.LastViewed.Where(lv => lv.UserId.Equals(user.Id)).ToListAsync();
-        
+
         if (lastViewed is not null)
         {
             return Ok(mapper.Map<List<LastViewed>, List<LastViewedDto>>(lastViewed));
@@ -52,7 +52,8 @@ public class HomeController(DeliveryDbContext context, UserManager<User> userMan
     {
         var firstCatalog = await context.CatalogFirst.Select(p => new
         {
-            p.Id, p.Name
+            p.Id,
+            p.Name
         }).ToListAsync();
         return Ok(firstCatalog);
     }

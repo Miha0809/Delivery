@@ -1,6 +1,7 @@
 using System.Reflection;
+using Delivery.Context;
 using Delivery.Models;
-using Delivery.Services;
+using Delivery.Profiles;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
@@ -13,21 +14,26 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-    {
-        In = ParameterLocation.Header,
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey
-    });
+    options.AddSecurityDefinition(
+        "oauth2",
+        new OpenApiSecurityScheme
+        {
+            In = ParameterLocation.Header,
+            Name = "Authorization",
+            Type = SecuritySchemeType.ApiKey
+        }
+    );
     options.OperationFilter<SecurityRequirementsOperationFilter>();
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Title = "Zhnyvo",
-        Version = "v1",
-        Description = "An API to zhnyvo for TeamChallenger",
-        
-    });
-    
+    options.SwaggerDoc(
+        "v1",
+        new OpenApiInfo
+        {
+            Title = "Zhnyvo",
+            Version = "v1",
+            Description = "An API to zhnyvo for TeamChallenger",
+        }
+    );
+
     var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     options.IncludeXmlComments(xmlPath);
@@ -35,14 +41,13 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DeliveryDbContext>(options =>
 {
-    options.UseLazyLoadingProxies()
-           .UseNpgsql(builder.Configuration.GetConnectionString("Host")); // Host Localhost
+    options.UseLazyLoadingProxies().UseNpgsql(builder.Configuration.GetConnectionString("Host")); // Host Localhost
 });
 builder.Services.AddCors();
 builder.Services.AddAuthorization();
-builder.Services.AddIdentityApiEndpoints<User>(options =>
+builder
+    .Services.AddIdentityApiEndpoints<User>(options =>
     {
-        
         options.SignIn.RequireConfirmedAccount = false;
         options.User.RequireUniqueEmail = true;
     })
@@ -55,9 +60,11 @@ var app = builder.Build();
 
 app.UseCors(options =>
 {
-    options.WithOrigins(
+    options
+        .WithOrigins(
             builder.Configuration.GetSection("FRONT_END_URLs:Host").Value!,
-            builder.Configuration.GetSection("FRONT_END_URLs:Local").Value!)
+            builder.Configuration.GetSection("FRONT_END_URLs:Local").Value!
+        )
         .AllowAnyHeader()
         .AllowAnyOrigin()
         .AllowAnyMethod();
@@ -66,11 +73,12 @@ app.UseCors(options =>
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())
 // {
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Zhnyvo V1");
-    });
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/swagger/v1/swagger.json", "Zhnyvo V1");
+});
+
 // }
 
 app.MapIdentityApi<User>();

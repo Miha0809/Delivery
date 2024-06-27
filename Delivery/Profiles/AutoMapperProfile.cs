@@ -2,7 +2,7 @@ using AutoMapper;
 using Delivery.Models;
 using Delivery.Models.DTOs;
 
-namespace Delivery.Services;
+namespace Delivery.Profiles;
 
 public class AutoMapperProfile : Profile
 {

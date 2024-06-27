@@ -1,7 +1,7 @@
 using AutoMapper;
+using Delivery.Context;
 using Delivery.Models;
 using Delivery.Models.DTOs;
-using Delivery.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +11,11 @@ namespace Delivery.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 // [Authorize] TODO: Uncomment
-public class FavoriteProductController(UserManager<User> userManager, DeliveryDbContext context, IMapper mapper) : Controller
+public class FavoriteProductController(
+    UserManager<User> userManager,
+    DeliveryDbContext context,
+    IMapper mapper
+) : Controller
 {
     /// <summary>
     /// Улюблені товари користувача.
@@ -23,7 +27,7 @@ public class FavoriteProductController(UserManager<User> userManager, DeliveryDb
         var user = await userManager.GetUserAsync(User);
         // var favorites = await context.Favorites.Where(p => p.User.Id.Equals(user.Id)).ToListAsync();
         // return Ok(mapper.Map<List<FavoriteDto>>(favorites));
-        return Ok(context.Users.FirstAsync(u => u.Id.Equals(user.Id)).Result.Favorites);
+        return Ok(context.Users.FirstAsync(u => u.Id.Equals(user!.Id)).Result.Favorites);
     }
 
     /// <summary>
@@ -42,13 +46,10 @@ public class FavoriteProductController(UserManager<User> userManager, DeliveryDb
         if (user is not null && IsExistsProduct(id))
         {
             var product = await context.Products.FindAsync(id);
-            var favorite = new Favorite()
-            {
-                ProductId = product.Id
-            };
-            
+            var favorite = new Favorite() { ProductId = product.Id };
+
             user.Favorites?.Add(favorite);
-            
+
             // if (context.Favorites.FirstOrDefault(f => f.Product.Id.Equals(id)) != null)
             // {
             //     return BadRequest("The product is a favorite.");
@@ -68,7 +69,7 @@ public class FavoriteProductController(UserManager<User> userManager, DeliveryDb
     {
         return context.Products.Find(id) != null;
     }
-    
+
     /// <summary>
     /// Видалити товар з улюблених.
     /// </summary>
