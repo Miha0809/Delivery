@@ -1,7 +1,7 @@
 using AutoMapper;
 using Delivery.Models;
 using Delivery.Models.DTOs;
-using Delivery.Services;
+using Delivery.Context;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,7 +12,9 @@ namespace Delivery.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 // [Authorize(Roles = $"{nameof(Roles.Admin)},{nameof(Roles.Moderator)},{nameof(Roles.Seller)}")] TODO: uncomment
-public class ProductController(DeliveryDbContext context, UserManager<User> userManager, IMapper mapper) : Controller
+public class ProductController(DeliveryDbContext context,
+                               UserManager<User> userManager,
+                               IMapper mapper) : Controller
 {
     /// <summary>
     /// Продукт по id.
@@ -39,7 +41,7 @@ public class ProductController(DeliveryDbContext context, UserManager<User> user
             await context.LastViewed.AddAsync(lastViewed);
             await context.SaveChangesAsync();
         }
-        
+
         return Ok(mapper.Map<ProductDto>(productById));
     }
 
@@ -56,7 +58,7 @@ public class ProductController(DeliveryDbContext context, UserManager<User> user
         var products = await context.Products.ToListAsync();
         return Ok(mapper.Map<List<Product>, List<ProductDto>>(products));
     }
-    
+
     /// <summary>
     /// Додавання продукта.
     /// </summary>
@@ -104,7 +106,7 @@ public class ProductController(DeliveryDbContext context, UserManager<User> user
     {
         var user = await userManager.GetUserAsync(User);
         product.Seller ??= user;
-        
+
         if (ModelState.IsValid && user is not null)
         {
             await context.Products.AddAsync(product);
@@ -174,11 +176,11 @@ public class ProductController(DeliveryDbContext context, UserManager<User> user
     public async Task<IActionResult> Change(int id, [FromBody] ProductDto productDto)
     {
         productDto.Seller = mapper.Map<UserDto>(await userManager.GetUserAsync(User));
-        
+
         var product = await context.Products.FirstOrDefaultAsync(product => product.Seller != null &&
                                                                             (product.Id.Equals(id) &&
                                                                              product.Seller.Email!.Equals(productDto.Seller.Email)));
-        
+
         if (product is not null)
         {
             context.Products.Update(product);
@@ -186,7 +188,7 @@ public class ProductController(DeliveryDbContext context, UserManager<User> user
 
             return Ok(product);
         }
-        
+
         return BadRequest("Doesn't exist product");
     }
 }
